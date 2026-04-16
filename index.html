@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trắc nghiệm</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .question { margin-bottom: 20px; border: 1px solid #ddd; padding: 15px; border-radius: 5px; }
+        .question h3 { color: #333; }
+        .options { list-style: none; padding: 0; }
+        .options li { margin-bottom: 5px; }
+        .options input[type="radio"] { margin-right: 10px; }
+        .options li.correct { background-color: #d4edda; color: #155724; padding: 5px; border-radius: 3px; }
+        .options li.incorrect { background-color: #f8d7da; color: #721c24; padding: 5px; border-radius: 3px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 20px; }
+        button:hover { background: #0056b3; }
+        #result { margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px; display: none; }
+        .feedback { font-weight: bold; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Trắc nghiệm</h1>
+    <p>Tổng cộng: 125 câu. Chọn đáp án cho mỗi câu để xem kết quả ngay lập tức (màu xanh: đúng, màu đỏ: sai).</p>
+    <form id="quizForm">
+        <div id="questions"></div>
+        <button type="button" onclick="submitQuiz()">Nộp bài để xem tổng điểm</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+       const questions = [
+
+{ q: "Câu 1: Chủ nghĩa Mác-Lênin là hệ tư tưởng của giai cấp, tầng lớp nào?", options: ["Nhân dân lao động","Tầng lớp tri thức","Giai cấp công nhân","Giai cấp nông dân"], answer: "c" },
+
+{ q: "Câu 2: Giai cấp công nhân thông qua con đường nào để giải phóng mình và giải phóng nhân dân lao động?", options: ["Biểu tình, bãi công","Đấu tranh nghị viện","Cách mạng xã hội chủ nghĩa","Đấu tranh kinh tế"], answer: "c" },
+
+{ q: "Câu 3: Nhiệm vụ cơ bản đầu tiên của cách mạng xã hội chủ nghĩa là gì?", options: ["Giai cấp công nhân giành lấy chính quyền","Xây dựng và hoàn thiện chính quyền nhà nước","Phát triển lực lượng sản xuất","Cả a, b, c đều đúng"], answer: "a" },
+
+{ q: "Câu 4: Giai cấp công nhân là người lao động gắn với nền sản xuất:", options: ["Nông nghiệp","Thủ công nghiệp","Đại công nghiệp","Công - nông nghiệp"], answer: "c" },
+
+{ q: "Câu 5: Học thuyết Mác-Lênin đã làm sáng tỏ vai trò lịch sử toàn thế giới của lực lượng nào?", options: ["Giai cấp tư sản","Giai cấp công nhân","Giai cấp nông dân","Tầng lớp tri thức"], answer: "b" },
+
+{ q: "Câu 6: Mục đích học tập môn Chủ nghĩa xã hội khoa học nhằm giúp sinh viên:", options: ["Nhận thức về chính trị - xã hội","Kỹ năng nghiên cứu khoa học","Niềm tin vào lý tưởng cách mạng","Cả a, b, c đều đúng"], answer: "d" },
+
+{ q: "Câu 7: Chủ nghĩa xã hội khoa học ra đời trên cơ sở của tiền đề nào?", options: ["Kinh tế - xã hội","Khoa học tự nhiên","Tư tưởng lý luận","Cả a, b, c đều đúng"], answer: "d" },
+
+{ q: "Câu 8: Phát kiến vĩ đại nào của Các Mác và Ăng ghen là cơ sở hình thành chủ nghĩa xã hội khoa học?", options: ["Chủ nghĩa duy vật lịch sử","Học thuyết về giá trị thặng dư","Học thuyết về sứ mệnh lịch sử của giai cấp công nhân","Cả a, b, c đều đúng"], answer: "d" },
+
+{ q: "Câu 9: Đối tượng nghiên cứu của CNXH là gì?", options: ["Sứ mệnh lịch sử của giai cấp công nhân","Sự thay thế tất yếu chủ nghĩa tư bản bằng CNXH","Con đường cải tạo và xây dựng CNXH và chủ nghĩa cộng sản","Cả a, b, c đều đúng"], answer: "d" },
+
+{ q: "Câu 10: Chỉ ra đâu là phương pháp nghiên cứu của CNXH-KH?", options: ["Chủ nghĩa duy vật biện chứng và chủ nghĩa duy vật lịch sử","Kết hợp phương pháp logic và lịch sử","Khảo sát, so sánh và phân tích về chính trị - xã hội","Cả a, b, c đều đúng"], answer: "d" },
+
+{ q: "Câu 11: Một trong những cống hiến vĩ đại của C.Mác là xây dựng học thuyết nào?", options: ["Sứ mệnh lịch sử của giai cấp công nhân","Giá trị lao động","Giá trị tiền công","Mâu thuẫn và đấu tranh giai cấp"], answer: "d" },
+
+{ q: "Câu 12: Tập đoàn người lao động trực tiếp hay gián tiếp vận hành những công cụ sản xuất có tính chất công nghiệp ngày càng hiện đại là:", options: ["Người lao động trực tiếp","Giai cấp công nhân","Người lao động có tri thức","Người lao động có kỹ thuật"], answer: "b" },
+
+{ q: "Câu 13: Theo C.Mác, đặc điểm nào cho thấy giai cấp công nhân là giai cấp vô sản?", options: ["Sức lao động là tài sản duy nhất","Tỷ lệ cổ phiếu ít","Không có quyền trong phân phối sản phẩm","Không có tư liệu sản xuất"], answer: "d" },
+
+{ q: "Câu 14: Theo C.Mác, công nhân tức là giai cấp chỉ có thể sống với điều kiện là kiếm được việc làm và chỉ kiếm được việc làm nếu họ:", options: ["Làm tăng tư bản","Có tay nghề","Có tổ chức","Có kỹ thuật"], answer: "a" },
+
+{ q: "Câu 15: Về địa vị trong các nước đi theo con đường xã hội chủ nghĩa, về cơ bản giai cấp công nhân cùng với nhân dân lao động đã trở thành những người làm chủ về:", options: ["Tư liệu lao động","Hầu hết tư liệu sản xuất","Tư liệu sản xuất chủ yếu","Tất cả sản phẩm xã hội"], answer: "c" },
+
+{ q: "Câu 16: Xét về phương thức lao động, công nhân trong thế kỷ XIX khác gì so với công nhân hiện nay?", options: ["Số lượng ít","Tính tổ chức thấp","Tính kỷ luật thấp","Chủ yếu là lao động cơ khí"], answer: "d" },
+
+{ q: "Câu 17: Hiện nay trong các nước tư bản phát triển, tuyệt đại bộ phận tư liệu sản xuất nằm trong tay ai?", options: ["Các nhà tư bản lớn","Tầng lớp trung lưu","Các tầng lớp lao động","Tư bản vừa và nhỏ"], answer: "a" },
+
+{ q: "Câu 18: Hiện nay, lực lượng chủ yếu của tiến trình lịch sử quá độ từ chủ nghĩa tư bản lên chủ nghĩa xã hội là:", options: ["Tầng lớp tri thức","Giai cấp công nhân","Liên minh công - nông","Các nước xã hội chủ nghĩa"], answer: "c" },
+
+{ q: "Câu 19: V.I. Lênin cho rằng, điểm yếu trong học thuyết Mác là ở chỗ nó làm sáng tỏ vai trò lịch sử thế giới của giai cấp vô sản là:", options: ["Xóa bỏ chế độ cũ","Xóa bỏ giai cấp","Xóa bỏ quan hệ sản xuất cũ","Xây dựng xã hội chủ nghĩa"], answer: "d" },
+
+{ q: "Câu 20: Theo C.Mác bước một thực hiện sứ mệnh của giai cấp công nhân là họ chiếm lấy chính quyền, biến những tư liệu sản xuất thành của ai?", options: ["Giai cấp nông dân","Dân nghèo thành thị","Giai cấp công nhân","Công nhân và nông dân"], answer: "d" },
+
+{ q: "Câu 21: Nhờ có yếu tố nào mà giai cấp công nhân có khả năng đoàn kết với giai cấp khác để thực hiện sứ mệnh lịch sử của mình?", options: ["Chất lượng lao động cao","Có tính kỷ luật cao","Lợi ích cơ bản thống nhất","Trình độ khoa học, kỹ thuật cao"], answer: "c" },
+
+{ q: "Câu 22: Giai cấp công nhân là giai cấp tiên phong cách mạng vì:", options: ["Có tinh thần đoàn kết, kỷ luật cao","Có trình độ kỹ thuật cao","Bị áp bức, bóc lột nặng nề","Đại biểu cho phương thức sản xuất tiên tiến"], answer: "d" },
+
+{ q: "Câu 23: Trong xây dựng xã hội xã hội chủ nghĩa, giai cấp công nhân có đặc điểm thế nào mà họ kiên định, kiên quyết đấu tranh chống chế độ áp bức bóc lột, xóa bỏ chế độ tư hữu?", options: ["Tính triệt để cách mạng","Không gắn với tư hữu","Tinh thần đoàn kết","Tính tổ chức, kỷ luật"], answer: "a" },
+
+{ q: "Câu 24: Một trong ba nội dung cơ bản trong “Cương lĩnh dân tộc” của Lênin là các dân tộc:", options: ["Hoàn toàn bình đẳng","Tất cả bình đẳng","Có nhiều bình đẳng","Bình đẳng về văn hoá"], answer: "a" },
+
+{ q: "Câu 25: Một trong ba nội dung cơ bản trong “Cương lĩnh dân tộc” của Lênin là các dân tộc có quyền:", options: ["Tự do","Tự quyết","Độc lập","Quyết định"], answer: "b" },
+
+{ q: "Câu 26: Một trong ba nội dung cơ bản trong “Cương lĩnh dân tộc” của Lênin là liên hiệp giai cấp công nhân với:", options: ["Nông dân các nước","Nhân dân thế giới","Tất cả các dân tộc","Người lao động của các nước"], answer: "c" },
+
+{ q: "Câu 27: Về bản chất, tôn giáo là một hiện tượng xã hội phản ánh điều gì của con người trước tiên và xã hội?", options: ["Bế tắc, bất lực","Hoàn toàn bất lực","Lo lắng, sợ hãi","Hoàn toàn phụ thuộc"], answer: "a" },
+
+{ q: "Câu 28: Còn nhiều hiện tượng mà khoa học chưa lý giải được, trình độ dân trí chưa cao khiến cho một số người tìm sự an ủi, che chở từ thần linh là nguyên nhân gì của sự tồn tại tôn giáo?", options: ["Kinh tế","Nhận thức","Tâm lý","Văn hoá"], answer: "b" },
+
+{ q: "Câu 29: Đặc trưng bản chất của dân chủ xã hội chủ nghĩa là đảm bảo mọi quyền lực đều thuộc về lực lượng nào?", options: ["Công nhân và nông dân","Nhân dân","Tri thức","Những người lao động"], answer: "b" },
+
+{ q: "Câu 30: Nhà nước đầu tiên thực hiện quyền lực thực sự của nhân dân là sau cuộc cách mạng nào?", options: ["Tư sản Mỹ","Tư sản Anh","Tư sản Pháp","Tháng Mười Nga"], answer: "d" },
+
+{ q: "Câu 31: Đặc trưng của nền văn hoá xã hội chủ nghĩa là nền văn hoá có tính nhân dân rộng rãi và tính:", options: ["Dân tộc","Đạo đức","Quốc tế","Đa dạng, phong phú"], answer: "a" },
+
+{ q: "Câu 32: Một trong các phương thức để thực hiện được những nội dung chính yếu của nền văn hoá xã hội chủ nghĩa là không ngừng tăng cường sự lãnh đạo và quản lý:", options: ["Đảng Cộng Sản","Đảng và Nhà nước","Nhà nước","Hệ thống chính trị"], answer: "b" },
+
+{ q: "Câu 33: Đoàn kết giữa những người có tôn giáo với những người không có tôn giáo, đoàn kết các tôn giáo là một vấn đề:", options: ["Nguyên tắc","Ưu tiên","Phải thực hiện","Cần thiết"], answer: "a" },
+
+{ q: "Câu 34: Dân tộc Việt Nam là một quốc gia đa dân tộc bao gồm:", options: ["56 dân tộc","54 dân tộc","50 dân tộc","52 dân tộc"], answer: "b" },
+
+{ q: "Câu 35: Cơ cấu xã hội của xã hội tư bản chủ nghĩa được đặc trưng bởi 2 giai cấp cơ bản đối lập nhau về lợi ích là:", options: ["Giai cấp tư sản và giai cấp nông dân","Giai cấp tư sản và tầng lớp tri thức","Giai cấp tư sản và giai cấp vô sản","Giai cấp tư sản và người lao động"], answer: "c" },
+
+{ q: "Câu 36: Chủ nghĩa Mác- Lênin đã chỉ ra những công cụ nhận thức và cải tạo thế giới cho lực lượng nào?", options: ["Giai cấp công nhân và nông dân","Giai cấp nông dân","Giai cấp công nhân","Tầng lớp tri thức"], answer: "c" },
+
+{ q: "Câu 37: Cách mạng xã hội chủ nghĩa do giai cấp, tầng lớp nào lãnh đạo?", options: ["Tầng lớp tri thức","Giai cấp công nhân và nông dân","Giai cấp nông dân","Giai cấp công nhân"], answer: "d" },
+
+{ q: "Câu 38: Đâu không phải là cơ sở chế độ hôn nhân tự nguyện trong thời kỳ quá độ lên chủ nghĩa xã hội?", options: ["Hôn nhân tự nguyện","Hôn nhân một vợ một chồng","Hôn nhân chỉ cần đảm bảo về mặt pháp lý","Vợ chồng bình đẳng"], answer: "c" }
+
+];
+        let html = '';
+        questions.forEach((item, index) => {
+            html += `<div class="question">
+                <h3>${item.q}</h3>
+                <ul class="options" id="options-${index}">`;
+            item.options.forEach((opt, i) => {
+                const value = String.fromCharCode(97 + i);
+                html += `<li id="li-${index}-${value}"><input type="radio" name="q${index}" value="${value}" id="q${index}_${value}"> ${opt}</li>`;
+            });
+            html += `</ul>
+            </div>`;
+        });
+        document.getElementById('questions').innerHTML = html;
+
+        // Thêm event listener cho mỗi radio button
+        questions.forEach((item, index) => {
+            const radios = document.querySelectorAll(`input[name="q${index}"]`);
+            radios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const selectedValue = this.value;
+                    const optionList = document.getElementById(`options-${index}`);
+                    optionList.querySelectorAll('li').forEach(li => li.classList.remove('correct', 'incorrect'));
+
+                    if (selectedValue === item.answer) {
+                        document.getElementById(`li-${index}-${selectedValue}`).classList.add('correct');
+                    } else {
+                        document.getElementById(`li-${index}-${selectedValue}`).classList.add('incorrect');
+                        // Highlight đáp án đúng
+                        const correctValue = item.answer;
+                        document.getElementById(`li-${index}-${correctValue}`).classList.add('correct');
+                    }
+                });
+            });
+        });
+
+        function submitQuiz() {
+            let score = 0;
+            questions.forEach((item, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                if (selected && selected.value === item.answer) {
+                    score++;
+                }
+            });
+            const percentage = (score / questions.length * 100).toFixed(2);
+            document.getElementById('result').innerHTML = `<h2>Kết quả: ${score}/${questions.length} (${percentage}%)</h2>`;
+            document.getElementById('result').style.display = 'block';
+        }
+    </script>
+    <div style="margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 9px;
+">by tuannv❤️</div>
+<div style="margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 9px;
+">github: https://github.com/YasashiiRin</div>
+</body>
+</html>
